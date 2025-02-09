@@ -1,15 +1,17 @@
 "use client";
-import { type ReactNode } from "react";
-import Link from "next/link";
-import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/client";
+import { logout } from "@/server/actions/auth";
+import { LogOut } from "lucide-react";
+import Link from "next/link";
+import { type ReactNode } from "react";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const handleLogout = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    window.location.href = "/login";
+    const result = await logout();
+
+    if (result.success) {
+      window.location.href = "/login";
+    }
   };
 
   return (

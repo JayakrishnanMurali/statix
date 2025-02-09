@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/client";
 import { type Website } from "@/lib/types";
+import { getWebsites } from "@/server/actions/websites";
 
 export default function DashboardPage() {
   const [websites, setWebsites] = useState<Website[]>([]);
@@ -13,14 +13,10 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchWebsites = async () => {
-      const supabase = createClient();
-      const { data: websites, error } = await supabase
-        .from("websites")
-        .select("*")
-        .order("created_at", { ascending: false });
+      const result = await getWebsites();
 
-      if (!error && websites) {
-        setWebsites(websites);
+      if (result.success && result.data) {
+        setWebsites(result.data);
       }
       setLoading(false);
     };
@@ -45,7 +41,7 @@ export default function DashboardPage() {
       ) : websites.length === 0 ? (
         <div className="rounded-lg border border-dashed p-8 text-center">
           <h3 className="text-lg font-semibold">No websites yet</h3>
-          <p className="text-muted-foreground mt-2">
+          <p className="mt-2 text-muted-foreground">
             Create your first website to get started.
           </p>
           <Link href="/dashboard/new">
@@ -61,10 +57,10 @@ export default function DashboardPage() {
             <Link
               key={website.id}
               href={`/dashboard/${website.id}`}
-              className="hover:border-foreground group relative rounded-lg border p-4"
+              className="group relative rounded-lg border p-4 hover:border-foreground"
             >
               <h3 className="font-semibold">{website.name}</h3>
-              <p className="text-muted-foreground mt-1 text-sm">
+              <p className="mt-1 text-sm text-muted-foreground">
                 {website.subdomain}.statix.com
               </p>
             </Link>

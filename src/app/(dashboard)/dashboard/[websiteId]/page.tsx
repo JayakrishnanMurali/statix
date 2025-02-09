@@ -1,18 +1,18 @@
-import { type Website } from "@/lib/types";
-import { createClient } from "@/lib/supabase/client";
 import { WebsiteBuilder } from "@/components/website-builder";
+import { getWebsiteById } from "@/server/actions/websites";
 
 export default async function WebsiteBuilderPage({
   params,
 }: {
   params: { websiteId: string };
 }) {
-  const supabase = createClient();
-  const { data: website } = await supabase
-    .from("websites")
-    .select("*")
-    .eq("id", params.websiteId)
-    .single();
+  const result = await getWebsiteById(params.websiteId);
+
+  if (!result.success) {
+    return <div>Error: {result.error}</div>;
+  }
+
+  const website = result.data;
 
   if (!website) {
     return <div>Website not found</div>;

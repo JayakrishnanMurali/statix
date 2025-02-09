@@ -1,6 +1,6 @@
 export interface Website {
   id: string;
-  user_id: string;
+  userId: string;
   name: string;
   subdomain: string;
   config: {
@@ -8,7 +8,7 @@ export interface Website {
     description?: string;
     theme?: string;
   };
-  created_at: string;
+  createdAt: Date;
 }
 
 export interface Component {
